@@ -1,0 +1,48 @@
+<?php
+session_start();
+if ($_SESSION['role'] != 'lecturer') {
+    header('Location: ../login.php');
+    exit();
+}
+
+include('../includes/db.php');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Post new coursework
+    $title = $_POST['title'];
+    $description = $_POST['description'];
+    $file = $_FILES['file']['name'];
+    $file_tmp = $_FILES['file']['tmp_name'];
+    $file_path = 'uploads/' . basename($file);
+    move_uploaded_file($file_tmp, $file_path);
+
+    $stmt = $conn->prepare("INSERT INTO coursework (title, description, file_path, lecturer_id) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sssi", $title, $description, $file_path, $_SESSION['user_id']);
+    $stmt->execute();
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturer Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, Lecturer</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label>Coursework Title</label>
+            <input type="text" name="title" required>
+            <label>Description</label>
+            <textarea name="description" required></textarea>
+            <label>Upload Coursework File</label>
+            <input type="file" name="file" required>
+            <button type="submit">Post Coursework</button>
+        </form>
+    </div>
+</body>
+</html>

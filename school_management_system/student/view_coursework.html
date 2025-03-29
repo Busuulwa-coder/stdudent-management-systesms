@@ -1,0 +1,33 @@
+<?php
+session_start();
+if ($_SESSION['role'] != 'admin') {
+    header('Location: ../login.php');
+    exit();
+}
+
+include('../includes/db.php');
+$stmt = $conn->prepare("SELECT * FROM users");
+$stmt->execute();
+$results = $stmt->get_result();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, Administrator</h2>
+        <h3>Manage Users:</h3>
+        <ul>
+            <?php while ($user = $results->fetch_assoc()): ?>
+                <li><?php echo $user['username']; ?> (Role: <?php echo $user['role']; ?>)</li>
+            <?php endwhile; ?>
+        </ul>
+    </div>
+</body>
+</html>

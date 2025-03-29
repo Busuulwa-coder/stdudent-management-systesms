@@ -1,0 +1,33 @@
+user tables
+CREATE TABLE users (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('student', 'lecturer', 'admin') NOT NULL
+);
+Coursework Table:\
+
+
+sql
+Copy
+CREATE TABLE coursework (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    lecturer_id INT(11) NOT NULL,
+    FOREIGN KEY (lecturer_id) REFERENCES users(id)
+);
+
+
+Student Enroll Table:
+
+sql
+Copy
+CREATE TABLE student_enrollment (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    student_id INT(11) NOT NULL,
+    coursework_id INT(11) NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES users(id),
+    FOREIGN KEY (coursework_id) REFERENCES coursework(id)
+);

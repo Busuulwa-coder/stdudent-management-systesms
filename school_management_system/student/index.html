@@ -1,0 +1,37 @@
+<?php
+session_start();
+if ($_SESSION['role'] != 'student') {
+    header('Location: ../login.php');
+    exit();
+}
+
+include('../includes/db.php');
+$stmt = $conn->prepare("SELECT * FROM coursework");
+$stmt->execute();
+$results = $stmt->get_result();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, Student</h2>
+        <h3>Coursework:</h3>
+        <ul>
+            <?php while ($coursework = $results->fetch_assoc()): ?>
+                <li>
+                    <h4><?php echo $coursework['title']; ?></h4>
+                    <p><?php echo $coursework['description']; ?></p>
+                    <a href="../<?php echo $coursework['file_path']; ?>" download>Download</a>
+                </li>
+            <?php endwhile; ?>
+        </ul>
+    </div>
+</body>
+</html>
